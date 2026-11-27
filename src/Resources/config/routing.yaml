@@ -1,0 +1,6 @@
+code_rhapsodie_migration_ui:
+    path: /migrations
+    controller: CodeRhapsodie\IbexaMigrationUiBundle\Controller\MigrationController::listAction
+    methods: [GET]
+    defaults:
+        siteaccess_group_whitelist: '%admin_group_name%'

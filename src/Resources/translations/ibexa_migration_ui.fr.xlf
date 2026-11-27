@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" target-language="fr" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="menu.migrations" resname="menu.migrations">
+        <source>menu.migrations</source>
+        <target>Migrations</target>
+      </trans-unit>
+      <trans-unit id="page.title" resname="page.title">
+        <source>page.title</source>
+        <target>Migrations</target>
+      </trans-unit>
+      <trans-unit id="breadcrumb.admin" resname="breadcrumb.admin">
+        <source>breadcrumb.admin</source>
+        <target>Administration</target>
+      </trans-unit>
+      <trans-unit id="source.doctrine" resname="source.doctrine">
+        <source>source.doctrine</source>
+        <target>Doctrine Migrations</target>
+      </trans-unit>
+      <trans-unit id="source.ibexa_doctrine" resname="source.ibexa_doctrine">
+        <source>source.ibexa_doctrine</source>
+        <target>Ibexa Doctrine Migrations</target>
+      </trans-unit>
+      <trans-unit id="source.ibexa_migrations" resname="source.ibexa_migrations">
+        <source>source.ibexa_migrations</source>
+        <target>Migrations Ibexa (YAML)</target>
+      </trans-unit>
+      <trans-unit id="source.kaliop" resname="source.kaliop">
+        <source>source.kaliop</source>
+        <target>Migrations Kaliop</target>
+      </trans-unit>
+      <trans-unit id="status.todo" resname="status.todo">
+        <source>status.todo</source>
+        <target>À faire</target>
+      </trans-unit>
+      <trans-unit id="status.started" resname="status.started">
+        <source>status.started</source>
+        <target>Démarrée</target>
+      </trans-unit>
+      <trans-unit id="status.done" resname="status.done">
+        <source>status.done</source>
+        <target>Terminée</target>
+      </trans-unit>
+      <trans-unit id="status.failed" resname="status.failed">
+        <source>status.failed</source>
+        <target>Échec</target>
+      </trans-unit>
+      <trans-unit id="status.skipped" resname="status.skipped">
+        <source>status.skipped</source>
+        <target>Ignorée</target>
+      </trans-unit>
+      <trans-unit id="status.partially_done" resname="status.partially_done">
+        <source>status.partially_done</source>
+        <target>Partiellement terminée</target>
+      </trans-unit>
+      <trans-unit id="status.suspended" resname="status.suspended">
+        <source>status.suspended</source>
+        <target>Suspendue</target>
+      </trans-unit>
+      <trans-unit id="column.name" resname="column.name">
+        <source>column.name</source>
+        <target>Migration</target>
+      </trans-unit>
+      <trans-unit id="column.status" resname="column.status">
+        <source>column.status</source>
+        <target>Statut</target>
+      </trans-unit>
+      <trans-unit id="column.target_version" resname="column.target_version">
+        <source>column.target_version</source>
+        <target>Version cible</target>
+      </trans-unit>
+      <trans-unit id="column.executed_at" resname="column.executed_at">
+        <source>column.executed_at</source>
+        <target>Exécutée le</target>
+      </trans-unit>
+      <trans-unit id="column.execution_time" resname="column.execution_time">
+        <source>column.execution_time</source>
+        <target>Durée d'exécution</target>
+      </trans-unit>
+      <trans-unit id="column.error" resname="column.error">
+        <source>column.error</source>
+        <target>Erreur</target>
+      </trans-unit>
+      <trans-unit id="column.error_show" resname="column.error_show">
+        <source>column.error_show</source>
+        <target>Afficher l'erreur</target>
+      </trans-unit>
+      <trans-unit id="filter.search" resname="filter.search">
+        <source>filter.search</source>
+        <target>Rechercher une migration…</target>
+      </trans-unit>
+      <trans-unit id="filter.all_statuses" resname="filter.all_statuses">
+        <source>filter.all_statuses</source>
+        <target>Tous les statuts</target>
+      </trans-unit>
+      <trans-unit id="filter.apply" resname="filter.apply">
+        <source>filter.apply</source>
+        <target>Filtrer</target>
+      </trans-unit>
+      <trans-unit id="filter.reset" resname="filter.reset">
+        <source>filter.reset</source>
+        <target>Réinitialiser</target>
+      </trans-unit>
+      <trans-unit id="empty.no_source" resname="empty.no_source">
+        <source>empty.no_source</source>
+        <target>Aucune table de migration trouvée. Installez et exécutez Doctrine Migrations, Ibexa Doctrine Migrations ou Kaliop migrations.</target>
+      </trans-unit>
+      <trans-unit id="empty.no_result" resname="empty.no_result">
+        <source>empty.no_result</source>
+        <target>Aucune migration ne correspond à vos critères.</target>
+      </trans-unit>
+      <trans-unit id="unit.milliseconds" resname="unit.milliseconds">
+        <source>unit.milliseconds</source>
+        <target>%value% ms</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

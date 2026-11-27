@@ -1,0 +1,10 @@
+includes:
+    - vendor/phpstan/phpstan-symfony/extension.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/ekino/phpstan-banned-code/extension.neon
+
+parameters:
+    level: 6
+    paths:
+        - src
+        - tests

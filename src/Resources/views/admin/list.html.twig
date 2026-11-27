@@ -1,0 +1,163 @@
+{% extends '@ibexadesign/ui/layout.html.twig' %}
+
+{% import '@ibexadesign/ui/component/macros.html.twig' as html %}
+
+{% trans_default_domain 'ibexa_migration_ui' %}
+
+{% block title %}{{ 'page.title'|trans }}{% endblock %}
+
+{% block breadcrumbs %}
+    {% include '@ibexadesign/ui/breadcrumbs.html.twig' with { items: [
+        { value: 'breadcrumb.admin'|trans(domain='messages') },
+        { value: 'page.title'|trans },
+    ]} %}
+{% endblock %}
+
+{% block header %}
+    {% include '@ibexadesign/ui/page_title.html.twig' with { title: 'page.title'|trans } %}
+{% endblock %}
+
+{% macro status_badge(entry) %}
+    {% set class = {
+        done: 'ibexa-badge--success',
+        todo: 'ibexa-badge--secondary',
+        failed: 'ibexa-badge--danger',
+        started: 'ibexa-badge--info',
+        partially_done: 'ibexa-badge--warning',
+        suspended: 'ibexa-badge--warning',
+    }[entry.status.value]|default('') %}
+    <span class="ibexa-badge {{ class }}">{{ entry.status.translationKey|trans({}, 'ibexa_migration_ui') }}</span>
+{% endmacro %}
+
+{% block content %}
+{% if sources is not empty %}
+    {% embed '@ibexadesign/ui/component/tab/tabs_header.html.twig' with {
+        tabs: sources|map((source, id) => { id: id, label: source.label|trans({}, 'ibexa_migration_ui') }),
+        active_tab: current.identifier,
+        hide_toggler: true,
+        current: current,
+    } %}
+        {% block tabs_list %}
+            {% for tab in tabs %}
+                {% embed '@ibexadesign/ui/component/tab/tabs_tab.html.twig' with {
+                    tab: tab,
+                    active: tab.id == current.identifier,
+                } %}
+                    {% block tab_link %}
+                        <a class="nav-link ibexa-tabs__link {{ active ? 'active' }}"
+                           href="{{ path('code_rhapsodie_migration_ui', { source: tab.id }|merge(query ? { q: query } : {})) }}">{{ tab.label }}</a>
+                    {% endblock %}
+                {% endembed %}
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
+{% endif %}
+
+<section class="container ibexa-container ibexa-tab-content px-4 pb-4">
+    {% if sources is empty %}
+        {% include '@ibexadesign/ui/component/alert/alert.html.twig' with {
+            type: 'info',
+            title: 'empty.no_source'|trans,
+            class: 'mt-4',
+        } %}
+    {% else %}
+        <form method="get" class="d-flex flex-wrap align-items-center py-4" style="gap: 1rem">
+            <input type="hidden" name="source" value="{{ current.identifier }}">
+            {% embed '@ibexadesign/ui/component/input_text.html.twig' with {
+                has_search: true,
+                wrapper_attr: { style: 'width: 24rem; max-width: 100%' },
+                query: query,
+                placeholder: 'filter.search'|trans,
+            } %}
+                {% block content %}
+                    <input type="text" name="q" value="{{ query }}" placeholder="{{ placeholder }}"
+                           class="ibexa-input ibexa-input--text form-control">
+                {% endblock %}
+            {% endembed %}
+            {% if statuses is not empty %}
+                {% set status_choices = [{ value: '', label: 'filter.all_statuses'|trans }] %}
+                {% for st in statuses %}
+                    {% set status_choices = status_choices|merge([{
+                        value: st.value,
+                        label: st.translationKey|trans ~ (counts[st.value] is defined ? ' (' ~ counts[st.value] ~ ')' : ''),
+                    }]) %}
+                {% endfor %}
+                {% set status_source %}
+                    <select name="status" class="form-control ibexa-input">
+                        {% for choice in status_choices %}
+                            <option value="{{ choice.value }}" {{ choice.value == (status ? status.value : '') ? 'selected' }}>{{ choice.label }}</option>
+                        {% endfor %}
+                    </select>
+                {% endset %}
+                {% include '@ibexadesign/ui/component/dropdown/dropdown.html.twig' with {
+                    source: status_source,
+                    choices: status_choices,
+                    value: status ? status.value : '',
+                    class: 'cr-migration-status-filter',
+                    attr: { style: 'min-width: 14rem' },
+                } %}
+            {% endif %}
+            <button type="submit" class="btn ibexa-btn ibexa-btn--primary">{{ 'filter.apply'|trans }}</button>
+            {% if query or status %}
+                <a class="btn ibexa-btn ibexa-btn--secondary" href="{{ path('code_rhapsodie_migration_ui', { source: current.identifier }) }}">{{ 'filter.reset'|trans }}</a>
+            {% endif %}
+        </form>
+
+        {% set is_kaliop = current.identifier == 'kaliop' %}
+        {% set show_target = current.identifier == 'ibexa_doctrine' %}
+        {% set head_cols = [
+            { content: 'column.name'|trans },
+        ]|merge(show_target ? [{ content: 'column.target_version'|trans }] : [])|merge([
+            { content: 'column.status'|trans },
+            { content: 'column.executed_at'|trans },
+            { content: (is_kaliop ? 'column.error' : 'column.execution_time')|trans },
+        ]) %}
+
+        {% set body_rows = [] %}
+        {% set error_modals = '' %}
+        {% for entry in result.entries %}
+            {% set name_cell %}{{ entry.name }}{% if entry.description %}<br><small class="text-muted">{{ entry.description }}</small>{% endif %}{% if entry.path %}<br><small class="text-muted">{{ entry.path }}</small>{% endif %}{% endset %}
+            {% set status_cell %}{{ _self.status_badge(entry) }}{% endset %}
+            {% if is_kaliop %}
+                {% set modal_id = 'cr-migration-error-' ~ loop.index %}
+                {% set last_cell %}{% if entry.error %}<button type="button" class="btn ibexa-btn ibexa-btn--secondary ibexa-btn--small" data-bs-toggle="modal" data-bs-target="#{{ modal_id }}">{{ 'column.error_show'|trans }}</button>{% else %}–{% endif %}{% endset %}
+                {% if entry.error %}
+                    {% set error_modals %}{{ error_modals|raw }}
+                    {% embed '@ibexadesign/ui/component/modal/modal.html.twig' with {
+                        id: modal_id,
+                        title: entry.name,
+                        size: 'large',
+                        attr_title: { class: 'text-break pe-3' },
+                        error: entry.error,
+                    } %}
+                        {% block body_content %}<div class="font-monospace text-break px-4">{{ error|nl2br }}</div>{% endblock %}
+                    {% endembed %}
+                    {% endset %}
+                {% endif %}
+            {% else %}
+                {% set last_cell = entry.executionTime is not null ? ('unit.milliseconds'|trans({ '%value%': entry.executionTime|number_format(0, '.', ' ') })) : '–' %}
+            {% endif %}
+            {% set body_rows = body_rows|merge([{ cols: [
+                { content: name_cell, raw: true },
+            ]|merge(show_target ? [{ content: entry.targetVersion ?? '–' }] : [])|merge([
+                { content: status_cell, raw: true },
+                { content: entry.executedAt ? entry.executedAt|ibexa_short_datetime : '–' },
+                { content: last_cell, raw: true },
+            ]) }]) %}
+        {% endfor %}
+
+        {% embed '@ibexadesign/ui/component/table/table.html.twig' with {
+            headline: html.results_headline(result.total),
+            head_cols: head_cols,
+            body_rows: body_rows,
+        } %}
+        {% endembed %}
+
+        {{ error_modals|raw }}
+
+        {% if pager.haveToPaginate %}
+            {% include '@ibexadesign/ui/pagination.html.twig' with { pager: pager } %}
+        {% endif %}
+    {% endif %}
+</section>
+{% endblock %}

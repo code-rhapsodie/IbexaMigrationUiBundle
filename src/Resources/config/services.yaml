@@ -1,0 +1,59 @@
+# Every source reads the connection of the repository of the current siteaccess (ibexa.persistence.connection).
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    _instanceof:
+        CodeRhapsodie\IbexaMigrationUiBundle\Migration\Source\MigrationSourceInterface:
+            tags: ['code_rhapsodie.migration_ui.source']
+
+    CodeRhapsodie\IbexaMigrationUiBundle\Migration\Source\Provider\RegisteredDoctrineMigrations:
+        arguments:
+            $dependencyFactory: '@?doctrine.migrations.dependency_factory'
+
+    CodeRhapsodie\IbexaMigrationUiBundle\Migration\Source\Provider\KaliopDefinitions:
+        arguments:
+            $loader: '@?ez_migration_bundle.loader'
+            $configResolver: '@?ibexa.config.resolver'
+            $projectDir: '%kernel.project_dir%'
+
+    CodeRhapsodie\IbexaMigrationUiBundle\Migration\Source\DoctrineMigrationSource:
+        arguments:
+            $connection: '@ibexa.persistence.connection'
+            $table: '%code_rhapsodie_migration_ui.doctrine.table%'
+            $enabled: '%code_rhapsodie_migration_ui.doctrine.enabled%'
+            $ibexaClasses: '%code_rhapsodie_migration_ui.ibexa_migration_classes%'
+            $registeredClasses: '@CodeRhapsodie\IbexaMigrationUiBundle\Migration\Source\Provider\RegisteredDoctrineMigrations'
+
+    CodeRhapsodie\IbexaMigrationUiBundle\Migration\Source\IbexaDoctrineMigrationSource:
+        arguments:
+            $connection: '@ibexa.persistence.connection'
+            $table: '%code_rhapsodie_migration_ui.doctrine.table%'
+            $enabled: '%code_rhapsodie_migration_ui.ibexa_doctrine.enabled%'
+            $ibexaClasses: '%code_rhapsodie_migration_ui.ibexa_migration_classes%'
+            $registeredClasses: '@CodeRhapsodie\IbexaMigrationUiBundle\Migration\Source\Provider\RegisteredDoctrineMigrations'
+
+    CodeRhapsodie\IbexaMigrationUiBundle\Migration\Source\IbexaMigrationSource:
+        arguments:
+            $connection: '@ibexa.persistence.connection'
+            $table: ibexa_migrations
+            $enabled: '%code_rhapsodie_migration_ui.ibexa_migrations.enabled%'
+
+    CodeRhapsodie\IbexaMigrationUiBundle\Migration\Source\KaliopMigrationSource:
+        arguments:
+            $connection: '@ibexa.persistence.connection'
+            $table: kaliop_migrations
+            $enabled: '%code_rhapsodie_migration_ui.kaliop.enabled%'
+            $definitions: '@CodeRhapsodie\IbexaMigrationUiBundle\Migration\Source\Provider\KaliopDefinitions'
+
+    CodeRhapsodie\IbexaMigrationUiBundle\Controller\MigrationController:
+        public: true
+        arguments:
+            $sources: !tagged_iterator code_rhapsodie.migration_ui.source
+            $userSettingService: '@?Ibexa\User\UserSetting\UserSettingService'
+        tags: ['controller.service_arguments']
+
+    CodeRhapsodie\IbexaMigrationUiBundle\Menu\MainMenuSubscriber:
+        tags: ['kernel.event_subscriber']
