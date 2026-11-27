@@ -15,7 +15,7 @@ jobs:
         php: ['8.1', '8.2', '8.3', '8.4']
         dependencies: [lowest, highest]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -26,6 +26,10 @@ jobs:
 
       - name: Validate composer.json
         run: composer validate --strict
+
+      - name: Drop QA-only dependency unsupported on PHP 8.1
+        if: matrix.php == '8.1'
+        run: composer remove --dev ekino/phpstan-banned-code --no-update
 
       - name: Install dependencies
         run: composer update --no-interaction --no-progress --prefer-dist ${{ matrix.dependencies == 'lowest' && '--prefer-lowest --prefer-stable' || '' }}
@@ -39,15 +43,15 @@ jobs:
           for f in src/Resources/translations/*.xlf; do php -r 'exit(simplexml_load_file($argv[1]) === false ? 1 : 0);' "$f"; done
 
       - name: PHP CS Fixer
-        if: matrix.dependencies == 'highest'
+        if: matrix.dependencies == 'highest' && matrix.php == '8.4'
         run: vendor/bin/php-cs-fixer fix --dry-run --diff
 
       - name: PHPStan
-        if: matrix.dependencies == 'highest'
+        if: matrix.dependencies == 'highest' && matrix.php == '8.4'
         run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
 
       - name: Rector
-        if: matrix.dependencies == 'highest'
+        if: matrix.dependencies == 'highest' && matrix.php == '8.4'
         run: vendor/bin/rector process --dry-run --no-progress-bar
 
       - name: PHPUnit
