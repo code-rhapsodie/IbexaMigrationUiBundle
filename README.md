@@ -3,7 +3,7 @@
 [![CI](https://github.com/code-rhapsodie/IbexaMigrationUiBundle/actions/workflows/ci.yml/badge.svg)](https://github.com/code-rhapsodie/IbexaMigrationUiBundle/actions/workflows/ci.yml)
 [![Latest version](https://img.shields.io/packagist/v/code-rhapsodie/ibexa-migration-ui-bundle)](https://packagist.org/packages/code-rhapsodie/ibexa-migration-ui-bundle)
 [![PHP](https://img.shields.io/packagist/dependency-v/code-rhapsodie/ibexa-migration-ui-bundle/php)](https://packagist.org/packages/code-rhapsodie/ibexa-migration-ui-bundle)
-[![License](https://img.shields.io/packagist/l/code-rhapsodie/ibexa-migration-ui-bundle)](LICENSE)
+[![License](https://img.shields.io/github/license/code-rhapsodie/IbexaMigrationUiBundle)](LICENSE)
 
 Admin interface for Ibexa DXP **4.6** and **5.0** that shows the content of the migration tables,
 so nobody has to open a DB client to check the status of a migration.
